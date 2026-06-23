@@ -32,6 +32,8 @@
 
   *{box-sizing:border-box;}
 
+  html{height:100%;}
+
   body{
     margin:0;
     min-height:100vh;
@@ -40,7 +42,8 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:20px;
+    padding:clamp(12px, 4vw, 32px);
+    overflow-x:hidden;
     background:
       radial-gradient(circle at 15% 8%, rgba(0,194,236,0.35), transparent 38%),
       radial-gradient(circle at 90% 85%, rgba(0,127,154,0.30), transparent 42%),
@@ -396,9 +399,53 @@
     min-height:16px;
   }
 
-  @media (max-width:420px){
-    .sheet{padding:24px 20px;}
-    .topbar{padding:16px 20px;}
+  /* ---------- Responsivo ---------- */
+
+  /* Celulares muy pequeños (320–380px) */
+  @media (max-width:380px){
+    .sheet{padding:22px 18px;}
+    .topbar{padding:14px 18px;}
+    h1.title{font-size:22px;}
+    p.lead{font-size:13.5px;}
+    .logo-mark{height:14px;}
+    .timer-ring{width:48px; height:48px;}
+    .timer-ring svg{width:48px; height:48px;}
+    h2.question{font-size:17px;}
+    .opcion{padding:13px 14px; font-size:13.5px;}
+    .final-stats{gap:8px;}
+    .stat{padding:13px 4px;}
+    .stat .v{font-size:18px;}
+  }
+
+  /* Tablets y desktop: la tarjeta crece y respira más, ya no se siente "perdida" */
+  @media (min-width:700px){
+    .stage{max-width:480px;}
+    .phone{border-radius:36px;}
+    .sheet{padding:40px 44px 36px;}
+    .topbar{padding:24px 32px 22px;}
+    .logo-mark{height:19px;}
+    h1.title{font-size:28px;}
+    p.lead{font-size:15.5px;}
+    .opcion{padding:17px 20px; font-size:15.5px;}
+    h2.question{font-size:20px;}
+    .timer-ring{width:60px; height:60px;}
+    .timer-ring svg{width:60px; height:60px;}
+  }
+
+  /* Desktop grande: limitar a un ancho de lectura cómodo, evitar que se vea minúscula en pantallas anchas */
+  @media (min-width:1100px){
+    .stage{max-width:520px;}
+    .sheet{padding:46px 50px 40px;}
+  }
+
+  /* Pantallas bajas (laptops con poca altura, celular en horizontal) */
+  @media (max-height:680px) and (min-width:700px){
+    .sheet{padding:28px 40px 26px;}
+  }
+
+  /* Altura muy reducida (celular horizontal): permitir scroll en vez de recortar contenido */
+  @media (max-height:480px){
+    body{align-items:flex-start; padding-top:16px; padding-bottom:16px;}
   }
 </style>
 </head>
@@ -415,7 +462,7 @@
    CONFIGURACIÓN
    ============================================================ */
 const CONFIG = {
-  API_URL: 'PEGA_AQUI_LA_URL_DE_TU_WEB_APP_DE_APPS_SCRIPT',
+  API_URL: 'https://script.google.com/macros/s/AKfycby_-lfk5Ubwi6Uvtz4DXZIl0-skaMIw2GVXaXwtDQJ3qatXWKa0li2Bq2Xn1nxn5_vJfw/exec',
   TIEMPO_PREGUNTA: 15,
   ADMIN_USER: 'admin',
   ADMIN_PASS: '12345'
