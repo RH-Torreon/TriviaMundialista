@@ -129,6 +129,95 @@
   }
   .step-dots span.active{background:var(--light-blue);}
 
+  /* ---------- Pantalla de bienvenida / premios ---------- */
+
+  .hype-banner{
+    background:linear-gradient(135deg, var(--dark-purple), var(--navy));
+    border-radius:var(--radio-md);
+    padding:22px 18px;
+    margin-bottom:22px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hype-banner::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at 85% 0%, rgba(0,194,236,0.35), transparent 55%);
+  }
+  .hype-banner .hype-title{
+    position:relative;
+    font-size:19px;
+    font-weight:800;
+    color:#fff;
+    margin:0 0 10px;
+    letter-spacing:0.01em;
+    line-height:1.3;
+    text-transform:uppercase;
+  }
+  .hype-banner .hype-title2{
+    position:relative;
+    font-size:15.5px;
+    font-weight:800;
+    color:var(--light-blue);
+    margin:0 0 10px;
+    letter-spacing:0.01em;
+    text-transform:uppercase;
+  }
+  .hype-banner .hype-sub{
+    position:relative;
+    font-size:12px;
+    font-weight:700;
+    color:#fff;
+    opacity:0.85;
+    letter-spacing:0.02em;
+    padding-top:10px;
+    border-top:1px solid rgba(255,255,255,0.18);
+  }
+
+  .prizes-label{
+    font-size:12px;
+    font-weight:800;
+    color:var(--navy);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    margin-bottom:12px;
+    text-align:center;
+  }
+
+  .prizes-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .prize-card{
+    background:var(--light-gray-2);
+    border:1.5px solid var(--light-gray-1);
+    border-radius:var(--radio-sm);
+    padding:14px 10px;
+    text-align:center;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .prize-card.wide{grid-column:1 / -1; display:flex; align-items:center; gap:14px; text-align:left; padding:14px 16px;}
+
+  .prize-icon{
+    width:46px; height:46px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--light-blue), var(--teal));
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 8px;
+    flex-shrink:0;
+    box-shadow:0 6px 14px rgba(0,194,236,0.3);
+  }
+  .prize-card.wide .prize-icon{margin:0;}
+  .prize-icon svg{width:24px; height:24px;}
+
+  .prize-name{font-size:12.5px; font-weight:700; color:var(--black); line-height:1.3;}
+  .prize-card.wide .prize-name{font-size:13.5px;}
+
+
   input[type="text"]{
     width:100%;
     padding:15px 16px;
@@ -380,6 +469,42 @@
   .rank-sub{font-size:11px; color:var(--gray); font-weight:600;}
   .rank-pts{font-size:16px; font-weight:800; color:var(--navy); flex-shrink:0;}
 
+  .section-label{
+    font-size:11px;
+    font-weight:800;
+    color:var(--gray);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin:18px 0 10px;
+  }
+  .section-label:first-child{margin-top:0;}
+
+  .pager{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:14px;
+  }
+  .pager-btn{
+    flex:1;
+    background:var(--light-gray-2);
+    color:var(--navy);
+    font-weight:700;
+    font-size:13px;
+    padding:11px;
+    border-radius:10px;
+    border:2px solid var(--light-gray-1);
+    transition:opacity .15s;
+  }
+  .pager-btn:disabled{opacity:0.35; cursor:not-allowed;}
+  .pager-info{
+    font-size:12px;
+    font-weight:700;
+    color:var(--gray);
+    white-space:nowrap;
+  }
+
   .top-right-link{
     position:fixed;
     bottom:16px;
@@ -572,12 +697,15 @@ function prepararPreguntas(){
 
 function calcularPuntos(esCorrecta, segundosRestantes){
   if(!esCorrecta) return 0;
-  const bono = Math.round((segundosRestantes / CONFIG.TIEMPO_PREGUNTA) * 100);
-  return 100 + bono;
+  const PUNTOS_BASE = 50;
+  const BONO_MAX = 250;
+  const fraccionTiempo = segundosRestantes / CONFIG.TIEMPO_PREGUNTA; // 0 a 1
+  const bono = Math.round(BONO_MAX * Math.pow(fraccionTiempo, 2)); // curva cuadrática: premia mucho más a quien contesta rápido
+  return PUNTOS_BASE + bono;
 }
 
 /* ============================================================
-   PASO 1: NÚMERO DE EMPLEADO
+   PASO 0: BIENVENIDA / PREMIOS
    ============================================================ */
 function pantallaInicio(){
   card.innerHTML = `
@@ -586,19 +714,111 @@ function pantallaInicio(){
       <span class="pill">Trivia</span>
     </div>
     <div class="sheet">
-      <div class="step-dots"><span class="active"></span><span></span></div>
+      <div class="hype-banner">
+        <div class="hype-title">⚽🎉 TRIVIA MUNDIALISTA 🎉⚽</div>
+        <div class="hype-title2">🏆 ¡PARTICIPA Y GANA! 🏆</div>
+        <div class="hype-sub">Fecha de premiación: 26 de Junio 2026</div>
+      </div>
+
+      <p class="lead">Responde las preguntas más rápido y mejor que los demás para subir en el ranking. Estos son algunos de los premios que se estarán premiando:</p>
+
+      <div class="prizes-label">Premios para los mejores lugares</div>
+      <div class="prizes-grid">
+        <div class="prize-card">
+          <div class="prize-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 3l3 3-3 4-2-2-4 0-2 2-3-4 3-3 2 2h4z"/>
+              <path d="M9 6v15h6V6"/>
+            </svg>
+          </div>
+          <div class="prize-name">Jersey de México</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 3v4l3 2 -1 4-4 1-2-4 3-3z"/>
+              <path d="M12 21v-4M3 12h4M21 12h-4M5.5 5.5l3 3M18.5 5.5l-3 3M5.5 18.5l3-3M18.5 18.5l-3-3"/>
+            </svg>
+          </div>
+          <div class="prize-name">Balón oficial del torneo</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 6 0 0 1 18 0"/>
+              <path d="M3 12v1a3 2 0 0 0 3 2h12a3 2 0 0 0 3-2v-1"/>
+              <circle cx="19" cy="11" r="1" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="prize-name">Gorra de México</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="3" width="14" height="18" rx="2"/>
+              <line x1="11" y1="18.5" x2="13" y2="18.5"/>
+            </svg>
+          </div>
+          <div class="prize-name">Tableta</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7l3-4h10l3 4"/>
+              <rect x="3" y="7" width="18" height="13" rx="1"/>
+              <path d="M3 11h18M9 7v4M15 7v4"/>
+            </svg>
+          </div>
+          <div class="prize-name">Boletos para cine</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="6" cy="12" r="1.4" fill="#fff" stroke="none"/>
+              <circle cx="12" cy="12" r="1.4" fill="#fff" stroke="none"/>
+              <circle cx="18" cy="12" r="1.4" fill="#fff" stroke="none"/>
+            </svg>
+          </div>
+          <div class="prize-name">¡Y habrá muchos más!</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btnIniciarTrivia">Iniciar trivia</button>
+    </div>
+  `;
+
+  document.getElementById('btnIniciarTrivia').addEventListener('click', pantallaNumEmpleado);
+}
+
+/* ============================================================
+   PASO 1: NÚMERO DE EMPLEADO
+   ============================================================ */
+function pantallaNumEmpleado(){
+  card.innerHTML = `
+    <div class="topbar">
+      ${LOGO_SVG}
+      <span class="pill">Trivia</span>
+    </div>
+    <div class="sheet">
+      <div class="step-dots"><span class="active"></span><span class="active"></span><span></span></div>
       <h1 class="title">¡Pon a prueba tu conocimiento!</h1>
       <p class="lead">18 preguntas sobre Clarios y el Mundial 2026. Tienes 15 segundos por pregunta: entre más rápido contestes bien, más puntos ganas.</p>
       <label class="field-label" for="empInput">Número de empleado</label>
       <input type="text" id="empInput" placeholder="Ej. 48213" maxlength="20" autocomplete="off" inputmode="numeric">
       <div class="err-msg" id="errMsg"></div>
-      <button class="btn-primary" id="btnSiguiente">Continuar</button>
+      <div class="btn-row">
+        <button class="btn-secondary" id="btnAtrasEmp">Atrás</button>
+        <button class="btn-primary" id="btnSiguiente">Continuar</button>
+      </div>
     </div>
   `;
 
   const input = document.getElementById('empInput');
   const btn = document.getElementById('btnSiguiente');
   const err = document.getElementById('errMsg');
+
+  document.getElementById('btnAtrasEmp').addEventListener('click', pantallaInicio);
 
   function continuar(){
     const val = input.value.trim();
@@ -626,7 +846,7 @@ function pantallaNombre(){
       <span class="pill">Trivia</span>
     </div>
     <div class="sheet">
-      <div class="step-dots"><span class="active"></span><span class="active"></span></div>
+      <div class="step-dots"><span class="active"></span><span class="active"></span><span class="active"></span></div>
       <h1 class="title">¿Cómo te llamas?</h1>
       <p class="lead">Tu nombre aparecerá en el ranking de mejores resultados.</p>
       <label class="field-label" for="nombreInput">Nombre completo</label>
@@ -643,7 +863,7 @@ function pantallaNombre(){
   const btn = document.getElementById('btnEmpezar');
   const err = document.getElementById('errMsg');
 
-  document.getElementById('btnAtras').addEventListener('click', pantallaInicio);
+  document.getElementById('btnAtras').addEventListener('click', pantallaNumEmpleado);
 
   function intentarEmpezar(){
     const val = input.value.trim();
@@ -926,27 +1146,62 @@ async function pantallaAdminResultados(){
       return Number(a.tiempoPromedio) - Number(b.tiempoPromedio);
     });
 
+    let adminPage = 0; // página actual del resto de concursantes (a partir del puesto 11)
+    const POR_PAGINA = 10;
+    const top10 = filas.slice(0, 10);
+    const resto = filas.slice(10);
+    const totalPaginas = Math.max(1, Math.ceil(resto.length / POR_PAGINA));
+
     const medalClass = i => i === 0 ? 'm1' : i === 1 ? 'm2' : i === 2 ? 'm3' : '';
     const rowClass = i => i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
 
-    card.querySelector('.sheet').innerHTML = `
-      <h1 class="title">Resultados</h1>
-      <p class="lead">${filas.length} participaciones registradas, ordenadas por puntuación.</p>
-      <div style="max-height:420px; overflow-y:auto;">
-        ${filas.map((r, i) => `
-          <div class="rank-row ${rowClass(i)}">
-            <div class="medal ${medalClass(i)}">${i + 1}</div>
-            <div class="rank-info">
-              <div class="rank-name">${r.nombre}</div>
-              <div class="rank-sub">No. ${r.numEmpleado || '—'} · ${r.aciertos}/${r.totalPreguntas} aciertos · ${Number(r.tiempoPromedio).toFixed(1)}s</div>
-            </div>
-            <div class="rank-pts">${r.puntuacion}</div>
+    function filaHTML(r, posicion){
+      return `
+        <div class="rank-row ${rowClass(posicion)}">
+          <div class="medal ${medalClass(posicion)}">${posicion + 1}</div>
+          <div class="rank-info">
+            <div class="rank-name">${r.nombre}</div>
+            <div class="rank-sub">No. ${r.numEmpleado || '—'} · ${r.aciertos}/${r.totalPreguntas} aciertos · ${Number(r.tiempoPromedio).toFixed(1)}s</div>
           </div>
-        `).join('') || '<p style="text-align:center; color:var(--gray); font-size:13px;">Sin registros aún</p>'}
-      </div>
-      <button class="btn-primary" id="btnVolverAdmin" style="margin-top:18px;">Volver a la trivia</button>
-    `;
-    document.getElementById('btnVolverAdmin').addEventListener('click', pantallaInicio);
+          <div class="rank-pts">${r.puntuacion}</div>
+        </div>
+      `;
+    }
+
+    function render(){
+      const sheet = card.querySelector('.sheet');
+      const inicioResto = adminPage * POR_PAGINA;
+      const paginaResto = resto.slice(inicioResto, inicioResto + POR_PAGINA);
+
+      sheet.innerHTML = `
+        <h1 class="title">Resultados</h1>
+        <p class="lead">${filas.length} participaciones registradas, ordenadas por puntuación.</p>
+
+        <div class="section-label">Top 10</div>
+        ${top10.map((r, i) => filaHTML(r, i)).join('') || '<p style="text-align:center; color:var(--gray); font-size:13px;">Sin registros aún</p>'}
+
+        ${resto.length > 0 ? `
+          <div class="section-label">Demás concursantes</div>
+          ${paginaResto.map((r, i) => filaHTML(r, inicioResto + 10 + i)).join('')}
+          <div class="pager">
+            <button class="pager-btn" id="btnPagAnt" ${adminPage === 0 ? 'disabled' : ''}>← Anterior</button>
+            <span class="pager-info">Página ${adminPage + 1} de ${totalPaginas}</span>
+            <button class="pager-btn" id="btnPagSig" ${adminPage >= totalPaginas - 1 ? 'disabled' : ''}>Siguiente →</button>
+          </div>
+        ` : ''}
+
+        <button class="btn-primary" id="btnVolverAdmin" style="margin-top:18px;">Volver a la trivia</button>
+      `;
+
+      document.getElementById('btnVolverAdmin').addEventListener('click', pantallaInicio);
+
+      const btnAnt = document.getElementById('btnPagAnt');
+      const btnSig = document.getElementById('btnPagSig');
+      if(btnAnt) btnAnt.addEventListener('click', () => { adminPage -= 1; render(); });
+      if(btnSig) btnSig.addEventListener('click', () => { adminPage += 1; render(); });
+    }
+
+    render();
   } catch(e){
     card.querySelector('.sheet').innerHTML = `
       <h1 class="title">Resultados</h1>
