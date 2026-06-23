@@ -524,6 +524,28 @@
     min-height:16px;
   }
 
+  .notice-box{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    background:#fff7e0;
+    border:1.5px solid var(--gold);
+    border-radius:var(--radio-sm);
+    padding:12px 14px;
+    margin:-4px 0 18px;
+  }
+  .notice-box .notice-icon{
+    font-size:16px;
+    line-height:1;
+    flex-shrink:0;
+  }
+  .notice-box .notice-text{
+    font-size:12.5px;
+    font-weight:700;
+    color:#7a5400;
+    line-height:1.4;
+  }
+
   /* ---------- Responsivo ---------- */
 
   /* Celulares muy pequeños (320–380px) */
@@ -807,6 +829,10 @@ function pantallaNumEmpleado(){
       <label class="field-label" for="empInput">Número de empleado</label>
       <input type="text" id="empInput" placeholder="Ej. 48213" maxlength="20" autocomplete="off" inputmode="numeric">
       <div class="err-msg" id="errMsg"></div>
+      <div class="notice-box">
+        <span class="notice-icon">⚠️</span>
+        <span class="notice-text">Solo se aceptará una participación por persona.</span>
+      </div>
       <div class="btn-row">
         <button class="btn-secondary" id="btnAtrasEmp">Atrás</button>
         <button class="btn-primary" id="btnSiguiente">Continuar</button>
